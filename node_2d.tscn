@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://bigb6rymybvr2"]
+
+[ext_resource type="Script" uid="uid://cb33gw8awktfp" path="res://Node2d.cs" id="1_wtcfe"]
+
+[node name="Node2D" type="Node2D" unique_id=1142774837]
+position = Vector2(30, 21)
+script = ExtResource("1_wtcfe")
