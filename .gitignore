@@ -1,0 +1,15 @@
+# Godot
+.godot/
+*.translation
+export_presets.cfg
+
+# Mono/C#
+.mono/
+data_*/
+mono_crash.*.json
+*.csproj.user
+
+# VS
+.vs/
+bin/
+obj/
