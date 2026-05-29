@@ -10,6 +10,7 @@ public partial class RoundManager : Node
     {
         // Phase 1: Initialize Game State
         InitializeGame();
+        ExecuteRoundSequence();
     }
 
     public void ExecuteRoundSequence()
@@ -59,7 +60,29 @@ public partial class RoundManager : Node
     }
 
     // Stub functions for individual system logic
-    private void InitializeGame() { CurrentState = new GameState(); }
+    private void InitializeGame() {
+        CurrentState = new GameState();
+
+        // Build the Organ Graph for testing
+        CurrentState.OrganGraph.Zones.Add("Lungs", new OrganZone("Lungs", 5));
+        CurrentState.OrganGraph.Zones.Add("Bloodstream", new OrganZone("Bloodstream", 10));
+        CurrentState.OrganGraph.Zones.Add("LymphNodes", new OrganZone("LymphNodes", 10));
+
+        // Connect BOTH the Bloodstream and Lymph Nodes to the Lungs
+        CurrentState.OrganGraph.AddConnection("Lungs", "Bloodstream");
+        CurrentState.OrganGraph.AddConnection("Lungs", "LymphNodes");
+
+        // Start the infection in the Lungs
+        CurrentState.OrganGraph.Zones["Lungs"].IsInfected = true;
+        CurrentState.InfectionRate = 1;
+
+        // THE TEST: Give the Bloodstream a high defense count
+        CurrentState.OrganGraph.Zones["Bloodstream"].ActiveDefenseCount = 5;
+        CurrentState.OrganGraph.Zones["LymphNodes"].ActiveDefenseCount = 0;
+
+        GD.Print("Game Initialized. Lungs are infected.");
+    }
+        
     private void RegenerateEP() { }
     private void DetermineVirusStrategy() { }
     private void ExecuteBFSVirusSpread() {
