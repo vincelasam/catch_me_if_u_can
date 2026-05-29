@@ -1,3 +1,4 @@
+using CatchMeIfYouCan.Scripts.AI;
 using Godot;
 using System;
 
@@ -61,7 +62,12 @@ public partial class RoundManager : Node
     private void InitializeGame() { CurrentState = new GameState(); }
     private void RegenerateEP() { }
     private void DetermineVirusStrategy() { }
-    private void ExecuteBFSVirusSpread() { }
+    private void ExecuteBFSVirusSpread() {
+        GD.Print("--- Phase 5: Executing BFS Virus Spread ---");
+
+        VirusAI virusBrain = new VirusAI();
+        virusBrain.ExecuteSpreadVirus(CurrentState);
+    }
     private void ExecuteVirusMutation() { }
     private void EvaluatePlayerDefenses() { }
     private void WaitForPlayerAction() { }
