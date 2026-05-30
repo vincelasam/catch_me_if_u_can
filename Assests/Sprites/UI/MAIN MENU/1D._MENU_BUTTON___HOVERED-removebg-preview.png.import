@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpl2ts4clcvlt"
-path="res://.godot/imported/1C. MENU BUTTON — NORMAL.jpeg-36beee63384a41ee459da2dae60e70dc.ctex"
+uid="uid://c7fxkgdg2batw"
+path="res://.godot/imported/1D._MENU_BUTTON___HOVERED-removebg-preview.png-d943a928525eacdd86c5000eac7341c5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assests/Sprites/UI/MAIN MENU/1C. MENU BUTTON — NORMAL.jpeg"
-dest_files=["res://.godot/imported/1C. MENU BUTTON — NORMAL.jpeg-36beee63384a41ee459da2dae60e70dc.ctex"]
+source_file="res://Assests/Sprites/UI/MAIN MENU/1D._MENU_BUTTON___HOVERED-removebg-preview.png"
+dest_files=["res://.godot/imported/1D._MENU_BUTTON___HOVERED-removebg-preview.png-d943a928525eacdd86c5000eac7341c5.ctex"]
 
 [params]
 
