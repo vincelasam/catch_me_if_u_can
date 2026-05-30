@@ -68,5 +68,95 @@ namespace CatchMeIfYouCan.Scripts.AI
                 }
             }
         }
+
+        public string CalculateBestMove(GameState currentState, int depth)
+        {
+            float bestScore = float.MinValue;
+            string bestTargetKey = null;
+
+            // The virus looks at all current infected zones to see where it can spread
+            foreach (var kvp in currentState.OrganGraph.Zones.Where(z => z.Value.IsInfected))
+            {
+                string currentZone = kvp.Key;
+
+                // Look at neighbors
+                foreach (string target in currentState.OrganGraph.AdjacencyList[currentZone])
+                {
+                    if (!currentState.OrganGraph.Zones[target].IsInfected)
+                    {
+                        // 1. CLONE THE STATE (Sandbox mode)
+                        GameState simulatedState = currentState.Clone();
+
+                        // 2. SIMULATE THE VIRUS MOVE
+                        simulatedState.OrganGraph.Zones[target].IsInfected = true;
+                        simulatedState.SeverityIndex += 5;
+
+                        // 3. RUN MINIMAX TO SEE HOW THE PLAYER REACTS
+                        // alpha = negative infinity, beta = positive infinity, isMaximizing = false (Player's turn next)
+                        float moveScore = Minimax(simulatedState, depth - 1, float.MinValue, float.MaxValue, false);
+
+                        // 4. KEEP THE BEST SCORE
+                        if (moveScore > bestScore)
+                        {
+                            bestScore = moveScore;
+                            bestTargetKey = target;
+                        }
+                    }
+                }
+            }
+
+            return bestTargetKey;
+        }
+        private float Minimax(GameState state, int depth, float alpha, float beta, bool isMaximizingPlayer)
+        {
+            // Base Case: We looked far enough into the future, or the game is over
+            if (depth == 0 || state.IsWinConditionMet() || state.IsLossConditionMet())
+            {
+                return EvaluateBoard(state);
+            }
+
+            if (isMaximizingPlayer) // --- VIRUS TURN ---
+            {
+                float maxEval = float.MinValue;
+                // In a full game, you loop through all possible virus mutations/spreads here
+
+                // Alpha-Beta Pruning
+                maxEval = Math.Max(maxEval, EvaluateBoard(state)); // Placeholder eval
+                alpha = Math.Max(alpha, EvaluateBoard(state));
+                if (beta <= alpha) return maxEval; // Prune!
+
+                return maxEval;
+            }
+            else // --- PLAYER TURN (IMMUNE SYSTEM) ---
+            {
+                float minEval = float.MaxValue;
+
+                // DUMMY PLAYER LOGIC: We pretend the player always adds +1 defense to the most vulnerable organ
+                GameState playerSimulatedState = state.Clone();
+                string weakestOrgan = playerSimulatedState.OrganGraph.Zones.Keys.First();
+                playerSimulatedState.OrganGraph.Zones[weakestOrgan].ActiveDefenseCount += 1; // Player defends!
+
+                // Pass the turn back to the Virus
+                float eval = Minimax(playerSimulatedState, depth - 1, alpha, beta, true);
+
+                minEval = Math.Min(minEval, eval);
+
+                // Alpha-Beta Pruning
+                beta = Math.Min(beta, eval);
+                if (beta <= alpha) return minEval; // Prune!
+
+                return minEval;
+            }
+        }
+
+        // The Heuristic: How the AI decides if a board state is "good" or "bad"
+        private float EvaluateBoard(GameState state)
+        {
+            // The Virus wants high severity. 
+            // We also subtract player EP because a rich player is dangerous to the virus.
+            return state.SeverityIndex - (state.PlayerEp * 0.5f);
+        }
+
+
     }
 }
