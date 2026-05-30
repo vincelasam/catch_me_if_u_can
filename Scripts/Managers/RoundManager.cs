@@ -8,68 +8,82 @@ using System.Text.Json;
 
 public partial class RoundManager : Node
 {
+    // -----------------------------------------------------------------------
+    // Public state — UI nodes and other systems read from here
+    // -----------------------------------------------------------------------
     public GameState CurrentState { get; private set; }
+
     public DifficultyMode SelectedDifficulty { get; set; } = DifficultyMode.Casual;
 
-
+    // -----------------------------------------------------------------------
+    // Internal tracking
+    // -----------------------------------------------------------------------
     private VirusAI _virusAI;
     private VirusRL _virusRL;
     private DecisionTree _decisionTree;
     private WeightedResponseSystem _wrs;
     private Random _rng = new Random();
 
-
+    // -----------------------------------------------------------------------
+    // Godot lifecycle
+    // -----------------------------------------------------------------------
     public override void _Ready()
     {
-        // Phase 1: Initialize Game State
+        // Phase 1: Initialize everything
         InitializeGame();
+
+        // Kick off the first round
         ExecuteRoundSequence();
     }
 
+    // -----------------------------------------------------------------------
+    // Main round loop — called at the start of each new round
+    // -----------------------------------------------------------------------
     public void ExecuteRoundSequence()
     {
-
         GD.Print($"\n========== ROUND {CurrentState.RoundNumber} | {CurrentState.Difficulty} ==========");
 
-        // Phase 2: New Round Begins
+        // Phase 2: EP regeneration based on healthy organs
         RegenerateEP();
 
-        // Phase 3 & 4: Virus Phase - RL Strategy & Minimax
+        // Phase 3 & 4: RL picks a strategy target, Minimax validates it
         DetermineVirusStrategy();
 
-        // Phase 5: Virus Phase - BFS Spread
+        // Phase 5: BFS executes the actual spatial spread
         ExecuteBFSVirusSpread();
 
-        // Phase 6: Virus Phase - Decision Tree Mutation
+        // Phase 6: Decision Tree selects a counter-mutation
         ExecuteVirusMutation();
 
-        // Phase 7: Infection Rate Check (Win Condition)
+        // Phase 7: Win condition check (infection rate = 0 → player wins)
         if (CurrentState.IsWinConditionMet())
         {
-            GD.Print("Player Wins! Virus eradicated.");
+            GD.Print("✓ PLAYER WINS — Virus fully eradicated!");
             return;
         }
 
-        // Phase 8: Severity Index Check (Loss Condition)
+        // Phase 8: Loss condition check (severity >= 100 → game over)
         if (CurrentState.IsLossConditionMet())
         {
-            GD.Print("Game Over. Severity reached 100%.");
+            GD.Print("✗ GAME OVER — Severity reached 100%.");
             return;
         }
 
-        // Phase 9: Immune System Phase - Weighted Response System
+        // Phase 9: WRS scores player defenses (feeds into next round's Decision Tree)
         EvaluatePlayerDefenses();
 
-        // Phase 10: Immune System Phase - Deploy Action
+        // Phase 10: Wait for player to choose and confirm an action
         WaitForPlayerAction();
 
-        // Phase 11 is triggered after player confirms action
+        // Phase 11 is triggered by OnPlayerActionConfirmed() after player commits
     }
 
     public void OnPlayerActionConfirmed()
     {
-        // Phase 11: Resolve Round & RL Q-Table Update
+        // Phase 11a: Apply all pending damage/healing/costs
         ResolveRound();
+
+        // Phase 11b: RL updates its Q-table based on this round's outcome
         UpdateRLQTable();
 
         // Advance round counter and loop
@@ -105,6 +119,7 @@ public partial class RoundManager : Node
                  $"EP/organ: {CurrentState.Settings.EpPerHealthyOrgan}");
     }
 
+
     private void BuildOrganGraph()
     {
         var g = CurrentState.OrganGraph;
@@ -135,6 +150,7 @@ public partial class RoundManager : Node
         GD.Print("[INIT] Organ graph built: Lungs→Bloodstream→Heart→Brain | " +
                  "Bloodstream→LymphNodes | Bloodstream→Gut | Lungs→LymphNodes");
     }
+
 
     private void SetStartingInfection()
     {
@@ -232,7 +248,9 @@ public partial class RoundManager : Node
     // PHASE 10 — Player Action Resolver
     // =========================================================================
 
-
+    /// Defines all valid immune actions, their EP costs, and their effects.
+    /// In a full game, the UI calls OnPlayerActionConfirmed(actionName, targetZone).
+    /// For testing/simulation, we auto-pick the best action the player can afford.
     private void WaitForPlayerAction()
     {
         GD.Print("[PLAYER] Phase 10 — Awaiting player action");
@@ -245,7 +263,9 @@ public partial class RoundManager : Node
         SimulatePlayerAction();
     }
 
-
+    /// Simulates a basic player decision for testing purposes.
+    /// Picks the most cost-effective action the player can afford,
+    /// targeting the most vulnerable uninfected zone adjacent to infection.
     private void SimulatePlayerAction()
     {
         string bestTarget = CurrentState.OrganGraph.Zones
@@ -271,6 +291,10 @@ public partial class RoundManager : Node
         }
     }
 
+    /// Applies a named immune action to a target zone.
+    /// Call this from the UI when the player confirms their choice.
+    ///
+    /// Action names must match the keys in WeightedResponseSystem.BaseEffectiveness.
     public void ApplyPlayerAction(string actionName, string targetZone)
     {
         // EP costs per the proposal's table
@@ -385,5 +409,4 @@ public partial class RoundManager : Node
         GD.Print("[RL] Phase 11b — Updating Q-table");
         _virusRL.UpdateQTable(CurrentState);
     }
-
 }
