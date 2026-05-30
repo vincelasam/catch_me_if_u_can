@@ -34,35 +34,28 @@ public partial class GameIntegrationTest : Node
     {
         GD.Print("\n========== STARTING INTEGRATION TESTS ==========");
 
-        // Original tests (unchanged)
         TestOrganGraphAndCloning();
         TestWinLossLogic();
 
-        // New tests — Commit 1
         TestDifficultySettings();
 
-        // New tests — Commit 2
         TestBFSRespectsDifficulty();
         TestBFSPrioritizesMinimaxHint();
         TestBFSBrainSeverityBonus();
         TestMinimaxChoosesBrain();
 
-        // New tests — Commit 3
         TestDecisionTreeBasicMutations();
         TestDecisionTreeCompoundMutation();
         TestWRS();
         TestUncontestedMutationPenalty();
 
-        // New tests — Commit 4
         TestRLActionSelectionOnlyReachable();
         TestRLBellmanUpdateDirection();
 
-        // New tests — Commit 5
         TestPlayerActionEPCost();
         TestPlayerActionDefenseEffect();
         TestSeverityClampedAt100();
 
-        // End-to-end
         TestFullRoundCycle();
 
         GD.Print("========== ALL TESTS PASSED ==========\n");
