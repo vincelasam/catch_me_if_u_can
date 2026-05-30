@@ -1,0 +1,256 @@
+[gd_scene format=3 uid="uid://d0yye3mum51j3"]
+
+[ext_resource type="Texture2D" uid="uid://i0ua7udsjooa" path="res://Assests/Sprites/UI/MAIN MENU/1A. BACKGROUND BASE.jpeg" id="1_28flt"]
+[ext_resource type="Texture2D" uid="uid://gccf35d14nty" path="res://Assests/Sprites/UI/MAIN MENU/1B._TITLE_LOCKUP-removebg-preview.png" id="2_48xlc"]
+[ext_resource type="Texture2D" uid="uid://xhxk4dngmiht" path="res://Assests/Sprites/UI/MAIN MENU/1C._MENU_BUTTON___NORMAL-removebg-preview.png" id="3_ce3w2"]
+[ext_resource type="Texture2D" uid="uid://c7fxkgdg2batw" path="res://Assests/Sprites/UI/MAIN MENU/1D._MENU_BUTTON___HOVERED-removebg-preview.png" id="4_n45e2"]
+[ext_resource type="Texture2D" uid="uid://cqjt5n5jvenhx" path="res://Assests/Sprites/UI/MAIN MENU/1F._STATUS_BAR_STRIP-removebg-preview.png" id="5_n45e2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_opfnp"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[sub_resource type="Gradient" id="Gradient_n45e2"]
+colors = PackedColorArray(0.046386324, 0.30612323, 0.22513464, 1, 0.03529412, 0.101960786, 0.0627451, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_opfnp"]
+gradient = SubResource("Gradient_n45e2")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n45e2"]
+atlas = ExtResource("5_n45e2")
+region = Rect2(0, 0, 621.617, 130.99998)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_opfnp"]
+atlas = ExtResource("5_n45e2")
+region = Rect2(724.4132, 25.545471, 687.5868, 109.33884)
+
+[node name="MainMenu" type="Control" unique_id=118470049]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="bg" type="TextureRect" parent="." unique_id=1586527552]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -397.0
+offset_top = -243.0
+offset_right = 164.0
+offset_bottom = 261.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_28flt")
+expand_mode = 4
+
+[node name="Panel" type="Panel" parent="." unique_id=108877478]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_opfnp")
+
+[node name="top right" type="ColorRect" parent="Panel" unique_id=2134099773]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -33.0
+offset_top = 11.0
+offset_right = -13.0
+offset_bottom = 13.0
+grow_horizontal = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="top right2" type="ColorRect" parent="Panel" unique_id=413768880]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_top = 11.0
+offset_right = -13.0
+offset_bottom = 31.0
+grow_horizontal = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="topleft" type="ColorRect" parent="Panel" unique_id=1642850813]
+layout_mode = 1
+offset_left = 11.0
+offset_top = 11.0
+offset_right = 31.0
+offset_bottom = 13.0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="topleft2" type="ColorRect" parent="Panel" unique_id=1437831830]
+layout_mode = 1
+offset_left = 11.0
+offset_top = 11.0
+offset_right = 13.0
+offset_bottom = 31.0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="lowleft" type="ColorRect" parent="Panel" unique_id=1908909976]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = -13.0
+offset_right = 31.0
+offset_bottom = -11.0
+grow_vertical = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="lowleft2" type="ColorRect" parent="Panel" unique_id=1020926145]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = -33.0
+offset_right = 13.0
+offset_bottom = -13.0
+grow_vertical = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="lowright" type="ColorRect" parent="Panel" unique_id=338135402]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -15.0
+offset_top = -13.0
+offset_right = 5.0
+offset_bottom = -11.0
+grow_horizontal = 0
+grow_vertical = 0
+rotation = 3.1415927
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="lowright2" type="ColorRect" parent="Panel" unique_id=1647525744]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -15.0
+offset_top = -33.0
+offset_right = -13.0
+offset_bottom = -13.0
+grow_horizontal = 0
+grow_vertical = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="gradientBG" type="TextureRect" parent="Panel" unique_id=934395406]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -300.0
+offset_right = 300.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_opfnp")
+
+[node name="title" type="TextureRect" parent="." unique_id=1563087482]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.5
+offset_top = -274.0
+offset_right = 200.5
+offset_bottom = -26.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_48xlc")
+expand_mode = 1
+
+[node name="deploy" type="TextureButton" parent="." unique_id=1573407588]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -151.0
+offset_top = -52.25
+offset_right = 151.0
+offset_bottom = 52.25
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("3_ce3w2")
+texture_pressed = ExtResource("4_n45e2")
+texture_hover = ExtResource("4_n45e2")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="footer" type="TextureRect" parent="." unique_id=1053083531]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -576.0
+offset_top = -131.0
+offset_right = -276.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = SubResource("AtlasTexture_n45e2")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="bscs" type="TextureRect" parent="." unique_id=1127126138]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -303.0
+offset_top = -107.0
+offset_right = -3.0
+offset_bottom = 2.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = SubResource("AtlasTexture_opfnp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="." unique_id=82289869]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -297.5
+offset_top = 11.0
+offset_right = 297.5
+offset_bottom = 34.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.11372549, 0.61960787, 0.45882353, 0.20784314)
+text = "POLYTECHNIC UNIVERSITY OF THE PHILIPPINES"
+horizontal_alignment = 1

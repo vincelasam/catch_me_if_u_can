@@ -1,0 +1,213 @@
+[gd_scene format=3 uid="uid://c8jsqgce2vlfq"]
+
+[ext_resource type="Texture2D" uid="uid://i0ua7udsjooa" path="res://Assests/Sprites/UI/MAIN MENU/1A. BACKGROUND BASE.jpeg" id="1_fy3ep"]
+[ext_resource type="Texture2D" uid="uid://dkp6qj3ans25u" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/2B. DIFFICULTY CARD — CASUAL.jpeg" id="2_xjuot"]
+[ext_resource type="Texture2D" uid="uid://dyxqrkci6r3o6" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/2C. DIFFICULTY CARD — EPIDEMIC.jpeg" id="3_8pnpj"]
+[ext_resource type="Texture2D" uid="uid://hpy2w2ucek5m" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/casual.jpg" id="3_rvgq2"]
+[ext_resource type="Texture2D" uid="uid://vc4vrpvrxmc1" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/2D. DIFFICULTY CARD — PANDEMIC.jpeg" id="4_mhxg3"]
+[ext_resource type="Texture2D" uid="uid://deuu48fap8clv" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/epid.jpg" id="5_oqavd"]
+[ext_resource type="Texture2D" uid="uid://2cmm8cjt2wst" path="res://Assests/Sprites/UI/MAIN MENU/2A._HEADER_STRIP-removebg-preview.png" id="5_xjuot"]
+[ext_resource type="Texture2D" uid="uid://boy0or4too0qd" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/pand.jpg" id="7_ntgwj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rvgq2"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="Difficulty" type="Control" unique_id=865198400]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="bg" type="TextureRect" parent="." unique_id=919190236]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_fy3ep")
+expand_mode = 4
+
+[node name="Panel" type="Panel" parent="." unique_id=1867891419]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rvgq2")
+
+[node name="top right" type="ColorRect" parent="Panel" unique_id=1759126019]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -33.0
+offset_top = 11.0
+offset_right = -13.0
+offset_bottom = 13.0
+grow_horizontal = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="top right2" type="ColorRect" parent="Panel" unique_id=1434185980]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_top = 11.0
+offset_right = -13.0
+offset_bottom = 31.0
+grow_horizontal = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="topleft" type="ColorRect" parent="Panel" unique_id=836099866]
+layout_mode = 1
+offset_left = 11.0
+offset_top = 11.0
+offset_right = 31.0
+offset_bottom = 13.0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="topleft2" type="ColorRect" parent="Panel" unique_id=2052186117]
+layout_mode = 1
+offset_left = 11.0
+offset_top = 11.0
+offset_right = 13.0
+offset_bottom = 31.0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="lowleft" type="ColorRect" parent="Panel" unique_id=322663225]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = -13.0
+offset_right = 31.0
+offset_bottom = -11.0
+grow_vertical = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="lowleft2" type="ColorRect" parent="Panel" unique_id=1253600604]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = -33.0
+offset_right = 13.0
+offset_bottom = -13.0
+grow_vertical = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="lowright" type="ColorRect" parent="Panel" unique_id=647055521]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -15.0
+offset_top = -13.0
+offset_right = 5.0
+offset_bottom = -11.0
+grow_horizontal = 0
+grow_vertical = 0
+rotation = 3.1415927
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="lowright2" type="ColorRect" parent="Panel" unique_id=1434653761]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -15.0
+offset_top = -33.0
+offset_right = -13.0
+offset_bottom = -13.0
+grow_horizontal = 0
+grow_vertical = 0
+color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=469973450]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -358.0
+offset_top = -140.0
+offset_right = 346.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="casual" type="TextureButton" parent="HBoxContainer" unique_id=1211711026]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("2_xjuot")
+texture_hover = ExtResource("3_rvgq2")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="epidemic" type="TextureButton" parent="HBoxContainer" unique_id=1443446351]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("3_8pnpj")
+texture_hover = ExtResource("5_oqavd")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="pandemic" type="TextureButton" parent="HBoxContainer" unique_id=2094268113]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("4_mhxg3")
+texture_hover = ExtResource("7_ntgwj")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1456182082]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -432.0
+offset_top = 40.0
+offset_right = 432.0
+offset_bottom = 147.0
+grow_horizontal = 2
+texture = ExtResource("5_xjuot")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="." unique_id=1721496311]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -297.5
+offset_top = 176.0
+offset_right = 297.5
+offset_bottom = 199.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.11372549, 0.61960787, 0.45882353, 1)
+text = "CLICK CARD TO SELECT SCENARIO"
+horizontal_alignment = 1

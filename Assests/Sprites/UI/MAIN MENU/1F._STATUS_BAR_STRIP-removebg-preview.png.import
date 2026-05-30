@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cyibigk1v8wk4"
-path="res://.godot/imported/1D. MENU BUTTON — HOVERED.jpeg-c6e33d7a24e314e7b3d2bffe2951b14f.ctex"
+uid="uid://cqjt5n5jvenhx"
+path="res://.godot/imported/1F._STATUS_BAR_STRIP-removebg-preview.png-9d891f62da3f6386cf11b17319300247.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assests/Sprites/UI/MAIN MENU/1D. MENU BUTTON — HOVERED.jpeg"
-dest_files=["res://.godot/imported/1D. MENU BUTTON — HOVERED.jpeg-c6e33d7a24e314e7b3d2bffe2951b14f.ctex"]
+source_file="res://Assests/Sprites/UI/MAIN MENU/1F._STATUS_BAR_STRIP-removebg-preview.png"
+dest_files=["res://.godot/imported/1F._STATUS_BAR_STRIP-removebg-preview.png-9d891f62da3f6386cf11b17319300247.ctex"]
 
 [params]
 

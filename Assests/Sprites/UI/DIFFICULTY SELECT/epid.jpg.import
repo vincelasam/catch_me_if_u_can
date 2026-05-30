@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpl2ts4clcvlt"
-path="res://.godot/imported/1C. MENU BUTTON — NORMAL.jpeg-36beee63384a41ee459da2dae60e70dc.ctex"
+uid="uid://deuu48fap8clv"
+path="res://.godot/imported/epid.jpg-9fac61d5ef71cd2517c3783b06160b62.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assests/Sprites/UI/MAIN MENU/1C. MENU BUTTON — NORMAL.jpeg"
-dest_files=["res://.godot/imported/1C. MENU BUTTON — NORMAL.jpeg-36beee63384a41ee459da2dae60e70dc.ctex"]
+source_file="res://Assests/Sprites/UI/DIFFICULTY SELECT/epid.jpg"
+dest_files=["res://.godot/imported/epid.jpg-9fac61d5ef71cd2517c3783b06160b62.ctex"]
 
 [params]
 
