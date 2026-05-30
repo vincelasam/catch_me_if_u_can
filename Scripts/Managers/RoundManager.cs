@@ -1,3 +1,4 @@
+using CatchMeIfYouCan.Scripts.AI;
 using Godot;
 using System;
 
@@ -9,6 +10,7 @@ public partial class RoundManager : Node
     {
         // Phase 1: Initialize Game State
         InitializeGame();
+        ExecuteRoundSequence();
     }
 
     public void ExecuteRoundSequence()
@@ -58,10 +60,47 @@ public partial class RoundManager : Node
     }
 
     // Stub functions for individual system logic
-    private void InitializeGame() { CurrentState = new GameState(); }
+    private void InitializeGame() {
+        CurrentState = new GameState();
+
+        // Build the Organ Graph for testing
+        CurrentState.OrganGraph.Zones.Add("Lungs", new OrganZone("Lungs", 5));
+        CurrentState.OrganGraph.Zones.Add("Bloodstream", new OrganZone("Bloodstream", 10));
+        CurrentState.OrganGraph.Zones.Add("LymphNodes", new OrganZone("LymphNodes", 10));
+
+        // Connect BOTH the Bloodstream and Lymph Nodes to the Lungs
+        CurrentState.OrganGraph.AddConnection("Lungs", "Bloodstream");
+        CurrentState.OrganGraph.AddConnection("Lungs", "LymphNodes");
+
+        // Start the infection in the Lungs
+        CurrentState.OrganGraph.Zones["Lungs"].IsInfected = true;
+        CurrentState.InfectionRate = 1;
+
+        // THE TEST: Give the Bloodstream a high defense count
+        CurrentState.OrganGraph.Zones["Bloodstream"].ActiveDefenseCount = 5;
+        CurrentState.OrganGraph.Zones["LymphNodes"].ActiveDefenseCount = 0;
+
+        GD.Print("Game Initialized. Lungs are infected.");
+    }
+        
     private void RegenerateEP() { }
-    private void DetermineVirusStrategy() { }
-    private void ExecuteBFSVirusSpread() { }
+    private void DetermineVirusStrategy()
+    {
+        GD.Print("--- Phase 3 & 4: Calculating Minimax ---");
+
+        VirusAI virusBrain = new VirusAI();
+
+        // Ask Minimax to look 2 turns into the future
+        string smartTarget = virusBrain.CalculateBestMove(CurrentState, depth: 2);
+
+        GD.Print($"Minimax has decided the absolute best organ to attack is: {smartTarget}");
+    }
+    private void ExecuteBFSVirusSpread() {
+        GD.Print("--- Phase 5: Executing BFS Virus Spread ---");
+
+        VirusAI virusBrain = new VirusAI();
+        virusBrain.ExecuteSpreadVirus(CurrentState);
+    }
     private void ExecuteVirusMutation() { }
     private void EvaluatePlayerDefenses() { }
     private void WaitForPlayerAction() { }
