@@ -84,7 +84,17 @@ public partial class RoundManager : Node
     }
         
     private void RegenerateEP() { }
-    private void DetermineVirusStrategy() { }
+    private void DetermineVirusStrategy()
+    {
+        GD.Print("--- Phase 3 & 4: Calculating Minimax ---");
+
+        VirusAI virusBrain = new VirusAI();
+
+        // Ask Minimax to look 2 turns into the future
+        string smartTarget = virusBrain.CalculateBestMove(CurrentState, depth: 2);
+
+        GD.Print($"Minimax has decided the absolute best organ to attack is: {smartTarget}");
+    }
     private void ExecuteBFSVirusSpread() {
         GD.Print("--- Phase 5: Executing BFS Virus Spread ---");
 
