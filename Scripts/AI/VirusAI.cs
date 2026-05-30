@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Godot;
 
 namespace CatchMeIfYouCan.Scripts.AI
@@ -10,153 +8,246 @@ namespace CatchMeIfYouCan.Scripts.AI
     public class VirusAI
     {
         // The main entry point for Phase 5
-        public void ExecuteSpreadVirus(GameState currentState)
+        public void ExecuteSpreadVirus(GameState state)
         {
-            OrganGraph graph = currentState.OrganGraph;
+            OrganGraph graph = state.OrganGraph;
+            int threshold = state.Settings.BfsSpreadThreshold;
+            string preferred = state.MinimaxRecommendedTarget;
+
             Queue<string> queue = new Queue<string>();
             HashSet<string> visited = new HashSet<string>();
 
-            // 1. Initialize the BFS frontier
-            // Find all currently infected zones and add their string keys to the queue
-            foreach (var kvp in graph.Zones)
+            // 1. Seed the BFS frontier with all currently infected zones
+            foreach (var kvp in graph.Zones.Where(z => z.Value.IsInfected))
             {
-                if (kvp.Value.IsInfected)
-                {
-                    queue.Enqueue(kvp.Key);
-                    visited.Add(kvp.Key);
-                }
+                queue.Enqueue(kvp.Key);
+                visited.Add(kvp.Key);
             }
 
-            // 2. The Core BFS Loop
+            // 2. BFS loop
             while (queue.Count > 0)
             {
-                string currentZoneKey = queue.Dequeue();
+                string current = queue.Dequeue();
 
-                // Safety check: Does this zone have connections?
-                if (!graph.AdjacencyList.ContainsKey(currentZoneKey)) continue;
+                if (!graph.AdjacencyList.ContainsKey(current)) continue;
 
-                // Get the string names of connected neighbors
-                List<string> neighborKeys = graph.AdjacencyList[currentZoneKey];
-
-                // Filter out neighbors we have already visited or infected this pass
-                List<string> unvisitedNeighborKeys = neighborKeys.Where(k => !visited.Contains(k)).ToList();
-
-                // 3. Sort neighbors by path of least resistance (Fewest Active Defenses)
-                // We use LINQ to look up the actual OrganZone object in the Zones dictionary to get its defense count
-                var sortedNeighborKeys = unvisitedNeighborKeys
-                    .OrderBy(k => graph.Zones[k].ActiveDefenseCount)
+                // Get unvisited neighbors
+                var unvisited = graph.AdjacencyList[current]
+                    .Where(k => !visited.Contains(k))
                     .ToList();
 
-                // 4. Evaluate spread logic
-                foreach (string targetKey in sortedNeighborKeys)
-                {
-                    OrganZone targetZone = graph.Zones[targetKey];
-
-                    // Example spread rule: Only spread if defenses are lower than 2 (tie this to Difficulty later)
-                    if (targetZone.ActiveDefenseCount < 2)
+                // Sort by defense count ascending.
+                // Tiebreaker: if Minimax recommended this zone, float it to the top
+                // (we subtract 0.5 from its effective sort key so it wins ties).
+                var sorted = unvisited
+                    .OrderBy(k =>
                     {
-                        targetZone.IsInfected = true;
-                        currentState.SeverityIndex += 5; // Severity Index rises 5%
-                        currentState.InfectionRate += 1; // Increase infection tracker
+                        float defCount = graph.Zones[k].ActiveDefenseCount;
+                        if (k == preferred) defCount -= 0.5f; // tiebreaker boost
+                        return defCount;
+                    })
+                    .ToList();
 
-                        GD.Print($"[VIRUS] Spread to {targetZone.Name}! Severity now {currentState.SeverityIndex}%.");
+                foreach (string target in sorted)
+                {
+                    OrganZone zone = graph.Zones[target];
 
-                        queue.Enqueue(targetKey);
+                    // Only spread if defenses are below the difficulty threshold
+                    if (zone.ActiveDefenseCount < threshold)
+                    {
+                        zone.IsInfected = true;
+                        state.InfectionRate += 1;
+                        state.SeverityIndex += 5;  // +5% per zone per proposal
+
+                        // Brain infection is catastrophic — extra +25% per proposal
+                        if (target == "Brain")
+                        {
+                            state.SeverityIndex += 25;
+                            GD.Print($"[VIRUS] ⚠ Brain infected! Severity jumps by additional 25%!");
+                        }
+
+                        GD.Print($"[BFS] Spread to {zone.Name} | Severity: {state.SeverityIndex}%");
+                        queue.Enqueue(target);
                     }
 
-                    visited.Add(targetKey);
+                    visited.Add(target);
                 }
             }
         }
 
-        public string CalculateBestMove(GameState currentState, int depth)
+        // ===================================================================
+        // PHASE 4 — Minimax: Pick the best initial spread target
+        // ===================================================================
+        public string CalculateBestMove(GameState state, int depth)
         {
             float bestScore = float.MinValue;
             string bestTargetKey = null;
 
-            // The virus looks at all current infected zones to see where it can spread
-            foreach (var kvp in currentState.OrganGraph.Zones.Where(z => z.Value.IsInfected))
+            // Look at every infected zone and every uninfected neighbor
+            foreach (var kvp in state.OrganGraph.Zones.Where(z => z.Value.IsInfected))
             {
-                string currentZone = kvp.Key;
+                if (!state.OrganGraph.AdjacencyList.ContainsKey(kvp.Key)) continue;
 
-                // Look at neighbors
-                foreach (string target in currentState.OrganGraph.AdjacencyList[currentZone])
+                foreach (string target in state.OrganGraph.AdjacencyList[kvp.Key])
                 {
-                    if (!currentState.OrganGraph.Zones[target].IsInfected)
+                    if (state.OrganGraph.Zones[target].IsInfected) continue;
+
+                    // Simulate this spread move on a cloned state
+                    GameState sim = state.Clone();
+                    sim.OrganGraph.Zones[target].IsInfected = true;
+                    sim.SeverityIndex += 5;
+                    if (target == "Brain") sim.SeverityIndex += 25;
+
+                    // Evaluate: player responds next (isMaximizing = false)
+                    float score = Minimax(sim, depth - 1, float.MinValue, float.MaxValue, false);
+
+                    if (score > bestScore)
                     {
-                        // 1. CLONE THE STATE (Sandbox mode)
-                        GameState simulatedState = currentState.Clone();
-
-                        // 2. SIMULATE THE VIRUS MOVE
-                        simulatedState.OrganGraph.Zones[target].IsInfected = true;
-                        simulatedState.SeverityIndex += 5;
-
-                        // 3. RUN MINIMAX TO SEE HOW THE PLAYER REACTS
-                        // alpha = negative infinity, beta = positive infinity, isMaximizing = false (Player's turn next)
-                        float moveScore = Minimax(simulatedState, depth - 1, float.MinValue, float.MaxValue, false);
-
-                        // 4. KEEP THE BEST SCORE
-                        if (moveScore > bestScore)
-                        {
-                            bestScore = moveScore;
-                            bestTargetKey = target;
-                        }
+                        bestScore = score;
+                        bestTargetKey = target;
                     }
                 }
             }
 
+            GD.Print($"[MINIMAX] Best move: {bestTargetKey ?? "none"} (score: {bestScore:F1})");
             return bestTargetKey;
         }
-        private float Minimax(GameState state, int depth, float alpha, float beta, bool isMaximizingPlayer)
+
+        // -------------------------------------------------------------------
+        // Minimax with Alpha-Beta Pruning (recursive)
+        // -------------------------------------------------------------------
+        private float Minimax(GameState state, int depth, float alpha, float beta, bool isMaximizing)
         {
-            // Base Case: We looked far enough into the future, or the game is over
+            // Base case: depth limit or terminal state
             if (depth == 0 || state.IsWinConditionMet() || state.IsLossConditionMet())
-            {
                 return EvaluateBoard(state);
-            }
 
-            if (isMaximizingPlayer) // --- VIRUS TURN ---
+            if (isMaximizing)
             {
+                // ---- VIRUS TURN: maximize severity ----
                 float maxEval = float.MinValue;
-                // In a full game, you loop through all possible virus mutations/spreads here
 
-                // Alpha-Beta Pruning
-                maxEval = Math.Max(maxEval, EvaluateBoard(state)); // Placeholder eval
-                alpha = Math.Max(alpha, EvaluateBoard(state));
-                if (beta <= alpha) return maxEval; // Prune!
+                // Build the list of all possible virus spread moves
+                var possibleMoves = GetVirusMoves(state);
+
+                // If no moves are available, evaluate the current board as-is
+                if (possibleMoves.Count == 0)
+                    return EvaluateBoard(state);
+
+                foreach (var (fromZone, targetZone) in possibleMoves)
+                {
+                    GameState sim = state.Clone();
+                    sim.OrganGraph.Zones[targetZone].IsInfected = true;
+                    sim.SeverityIndex += 5;
+                    if (targetZone == "Brain") sim.SeverityIndex += 25;
+
+                    float eval = Minimax(sim, depth - 1, alpha, beta, false);
+                    maxEval = Math.Max(maxEval, eval);
+
+                    // Alpha-Beta: update alpha and prune
+                    alpha = Math.Max(alpha, eval);
+                    if (beta <= alpha) break; // Beta cutoff — prune remaining branches
+                }
 
                 return maxEval;
             }
-            else // --- PLAYER TURN (IMMUNE SYSTEM) ---
+            else
             {
+                // ---- PLAYER TURN: minimize severity ----
                 float minEval = float.MaxValue;
 
-                // DUMMY PLAYER LOGIC: We pretend the player always adds +1 defense to the most vulnerable organ
-                GameState playerSimulatedState = state.Clone();
-                string weakestOrgan = playerSimulatedState.OrganGraph.Zones.Keys.First();
-                playerSimulatedState.OrganGraph.Zones[weakestOrgan].ActiveDefenseCount += 1; // Player defends!
+                // Simulate the player's best defensive response:
+                // The player adds 2 defenses to the most vulnerable infected-adjacent zone.
+                // (More realistic than the original's "+1 to first zone".)
+                var playerMoves = GetPlayerDefenseMoves(state);
 
-                // Pass the turn back to the Virus
-                float eval = Minimax(playerSimulatedState, depth - 1, alpha, beta, true);
+                if (playerMoves.Count == 0)
+                    return EvaluateBoard(state);
 
-                minEval = Math.Min(minEval, eval);
+                foreach (string defendTarget in playerMoves)
+                {
+                    GameState sim = state.Clone();
+                    sim.OrganGraph.Zones[defendTarget].ActiveDefenseCount += 2;
+                    sim.PlayerEp -= 10; // WBC cost per proposal
 
-                // Alpha-Beta Pruning
-                beta = Math.Min(beta, eval);
-                if (beta <= alpha) return minEval; // Prune!
+                    float eval = Minimax(sim, depth - 1, alpha, beta, true);
+                    minEval = Math.Min(minEval, eval);
+
+                    // Alpha-Beta: update beta and prune
+                    beta = Math.Min(beta, eval);
+                    if (beta <= alpha) break; // Alpha cutoff — prune remaining branches
+                }
 
                 return minEval;
             }
         }
 
-        // The Heuristic: How the AI decides if a board state is "good" or "bad"
-        private float EvaluateBoard(GameState state)
+        // -------------------------------------------------------------------
+        // Helper: enumerate all zones the virus can spread to this turn
+        // -------------------------------------------------------------------
+        private List<(string from, string to)> GetVirusMoves(GameState state)
         {
-            // The Virus wants high severity. 
-            // We also subtract player EP because a rich player is dangerous to the virus.
-            return state.SeverityIndex - (state.PlayerEp * 0.5f);
+            var moves = new List<(string, string)>();
+
+            foreach (var kvp in state.OrganGraph.Zones.Where(z => z.Value.IsInfected))
+            {
+                if (!state.OrganGraph.AdjacencyList.ContainsKey(kvp.Key)) continue;
+
+                foreach (string neighbor in state.OrganGraph.AdjacencyList[kvp.Key])
+                {
+                    if (!state.OrganGraph.Zones[neighbor].IsInfected)
+                        moves.Add((kvp.Key, neighbor));
+                }
+            }
+
+            return moves;
         }
 
+        // -------------------------------------------------------------------
+        // Helper: enumerate zones the player would most likely defend
+        // Strategy: the player defends uninfected zones adjacent to infection
+        // that have the fewest current defenses (most vulnerable).
+        // -------------------------------------------------------------------
+        private List<string> GetPlayerDefenseMoves(GameState state)
+        {
+            var candidates = new HashSet<string>();
 
+            foreach (var kvp in state.OrganGraph.Zones.Where(z => z.Value.IsInfected))
+            {
+                if (!state.OrganGraph.AdjacencyList.ContainsKey(kvp.Key)) continue;
+
+                foreach (string neighbor in state.OrganGraph.AdjacencyList[kvp.Key])
+                {
+                    if (!state.OrganGraph.Zones[neighbor].IsInfected)
+                        candidates.Add(neighbor);
+                }
+            }
+
+            // Return up to 3 most vulnerable candidates (fewest defenses first)
+            return candidates
+                .OrderBy(k => state.OrganGraph.Zones[k].ActiveDefenseCount)
+                .Take(3)
+                .ToList();
+        }
+
+        // -------------------------------------------------------------------
+        // Board evaluation heuristic
+        // Higher score = better for the virus.
+        // Components:
+        //   + SeverityIndex (direct progress toward 100% game over)
+        //   + 3 × number of infected zones (controlling more zones = strategic advantage)
+        //   + 2 × number of stacked mutations (harder to counter = good for virus)
+        //   - 0.5 × PlayerEP (a well-resourced player is dangerous)
+        // -------------------------------------------------------------------
+        private float EvaluateBoard(GameState state)
+        {
+            int infectedCount = state.OrganGraph.Zones.Values.Count(z => z.IsInfected);
+            int mutationStacks = state.ActiveMutationStacks.Values.Sum();
+
+            return state.SeverityIndex
+                 + (3f * infectedCount)
+                 + (2f * mutationStacks)
+                 - (0.5f * state.PlayerEp);
+        }
     }
 }
