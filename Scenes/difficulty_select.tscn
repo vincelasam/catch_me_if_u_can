@@ -1,0 +1,124 @@
+[gd_scene format=3 uid="uid://dqgva27xnxr3s"]
+
+[ext_resource type="Texture2D" uid="uid://bnuaxlfinxy86" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/Corner Bracket.png" id="1_4fhga"]
+[ext_resource type="Texture2D" uid="uid://bpaolfsqof81" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/2A. HEADER STRIP.jpeg" id="2_chmkc"]
+[ext_resource type="Texture2D" uid="uid://dkp6qj3ans25u" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/2B. DIFFICULTY CARD — CASUAL.jpeg" id="3_gh66d"]
+[ext_resource type="Texture2D" uid="uid://dyxqrkci6r3o6" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/2C. DIFFICULTY CARD — EPIDEMIC.jpeg" id="4_uh1ak"]
+[ext_resource type="Texture2D" uid="uid://vc4vrpvrxmc1" path="res://Assests/Sprites/UI/DIFFICULTY SELECT/2D. DIFFICULTY CARD — PANDEMIC.jpeg" id="5_3oxf8"]
+
+[node name="difficulty_select" type="Control" unique_id=554864430]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1371137275]
+layout_mode = 0
+offset_right = 1153.0
+offset_bottom = 649.0
+color = Color(0.019607844, 0.050980393, 0.039215688, 1)
+metadata/_edit_lock_ = true
+
+[node name="corner1" type="NinePatchRect" parent="ColorRect" unique_id=1267203965]
+layout_mode = 0
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 61.0
+offset_bottom = 61.0
+texture = ExtResource("1_4fhga")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+metadata/_edit_lock_ = true
+
+[node name="corner2" type="NinePatchRect" parent="ColorRect" unique_id=156541515]
+layout_mode = 0
+offset_left = -11.000001
+offset_top = 659.0
+offset_right = 64.0
+offset_bottom = 734.0
+rotation = -1.5780482
+texture = ExtResource("1_4fhga")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+metadata/_edit_lock_ = true
+
+[node name="corner3" type="NinePatchRect" parent="ColorRect" unique_id=664614308]
+layout_mode = 0
+offset_left = 1164.0
+offset_top = -11.000002
+offset_right = 1239.0
+offset_bottom = 64.0
+rotation = 1.5728247
+texture = ExtResource("1_4fhga")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+metadata/_edit_lock_ = true
+
+[node name="corner4" type="NinePatchRect" parent="ColorRect" unique_id=1672430837]
+layout_mode = 0
+offset_left = 1164.0
+offset_top = 660.00006
+offset_right = 1239.0
+offset_bottom = 735.00006
+rotation = -3.1605537
+texture = ExtResource("1_4fhga")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+metadata/_edit_lock_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=704622456]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 1150.0
+offset_bottom = 647.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1058898807]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="TextureRect" parent="MarginContainer/VBoxContainer" unique_id=545682403]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+texture = ExtResource("2_chmkc")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=511730571]
+layout_mode = 2
+alignment = 1
+
+[node name="Casual Difficulty" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=728649106]
+custom_minimum_size = Vector2(300, 450)
+layout_mode = 2
+texture_normal = ExtResource("3_gh66d")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Epidemic Difficulty" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1072478738]
+custom_minimum_size = Vector2(300, 450)
+layout_mode = 2
+texture_normal = ExtResource("4_uh1ak")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Pandemic Difficulty" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=366991539]
+custom_minimum_size = Vector2(300, 450)
+layout_mode = 2
+texture_normal = ExtResource("5_3oxf8")
+ignore_texture_size = true
+stretch_mode = 5
