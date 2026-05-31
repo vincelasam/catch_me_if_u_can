@@ -4,14 +4,14 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
+
 
 public partial class RoundManager : Node
 {
     // -----------------------------------------------------------------------
     // Public state — UI nodes and other systems read from here
     // -----------------------------------------------------------------------
-    public GameState CurrentState { get; private set; }
+    public GameState CurrentState { get; set; }
 
     public DifficultyMode SelectedDifficulty { get; set; } = DifficultyMode.Casual;
 
@@ -119,7 +119,15 @@ public partial class RoundManager : Node
                  $"EP/organ: {CurrentState.Settings.EpPerHealthyOrgan}");
     }
 
-
+    /// <summary>
+    /// Builds the full 6-zone anatomical organ graph as specified in the proposal.
+    /// Connections reflect real physiology: Lungs → Bloodstream (gas exchange),
+    /// Bloodstream → Heart/LymphNodes/Gut (circulation), Heart → Brain (carotid).
+    ///
+    /// Zone EP generation values reflect their immunological importance:
+    /// LymphNodes generate the most (they ARE the immune system's factory).
+    /// Brain generates the least — it's protected by the blood-brain barrier.
+    /// </summary>
     private void BuildOrganGraph()
     {
         var g = CurrentState.OrganGraph;
@@ -150,7 +158,6 @@ public partial class RoundManager : Node
         GD.Print("[INIT] Organ graph built: Lungs→Bloodstream→Heart→Brain | " +
                  "Bloodstream→LymphNodes | Bloodstream→Gut | Lungs→LymphNodes");
     }
-
 
     private void SetStartingInfection()
     {
@@ -248,9 +255,11 @@ public partial class RoundManager : Node
     // PHASE 10 — Player Action Resolver
     // =========================================================================
 
+    /// <summary>
     /// Defines all valid immune actions, their EP costs, and their effects.
     /// In a full game, the UI calls OnPlayerActionConfirmed(actionName, targetZone).
     /// For testing/simulation, we auto-pick the best action the player can afford.
+    /// </summary>
     private void WaitForPlayerAction()
     {
         GD.Print("[PLAYER] Phase 10 — Awaiting player action");
@@ -263,9 +272,6 @@ public partial class RoundManager : Node
         SimulatePlayerAction();
     }
 
-    /// Simulates a basic player decision for testing purposes.
-    /// Picks the most cost-effective action the player can afford,
-    /// targeting the most vulnerable uninfected zone adjacent to infection.
     private void SimulatePlayerAction()
     {
         string bestTarget = CurrentState.OrganGraph.Zones
@@ -283,7 +289,7 @@ public partial class RoundManager : Node
         // Pick best affordable action
         if (CurrentState.PlayerEp >= 10)
         {
-            ApplyPlayerAction("WhiteBloodCells", bestTarget);
+            PlayerActionResolver.Apply(CurrentState, "WhiteBloodCells", bestTarget);
         }
         else
         {
@@ -291,84 +297,9 @@ public partial class RoundManager : Node
         }
     }
 
-    /// Applies a named immune action to a target zone.
-    /// Call this from the UI when the player confirms their choice.
-    ///
-    /// Action names must match the keys in WeightedResponseSystem.BaseEffectiveness.
     public void ApplyPlayerAction(string actionName, string targetZone)
     {
-        // EP costs per the proposal's table
-        int cost = actionName switch
-        {
-            "WhiteBloodCells" => 10,
-            "Antibodies" => 25,
-            "Inflammation" => 20,
-            "FeverResponse" => 35,
-            "MemoryCells" => 15,
-            "CytokineBurst" => 50,
-            _ => 0
-        };
-
-        if (CurrentState.PlayerEp < cost)
-        {
-            GD.Print($"[PLAYER] Not enough EP for {actionName} (need {cost}, have {CurrentState.PlayerEp})");
-            return;
-        }
-
-        CurrentState.PlayerEp -= cost;
-
-        // Track deployed defenses for WRS
-        if (!CurrentState.PlayerDefenses.ContainsKey(actionName))
-            CurrentState.PlayerDefenses[actionName] = 0;
-        CurrentState.PlayerDefenses[actionName]++;
-
-        // Apply mechanical effect
-        if (CurrentState.OrganGraph.Zones.ContainsKey(targetZone))
-        {
-            var zone = CurrentState.OrganGraph.Zones[targetZone];
-
-            switch (actionName)
-            {
-                case "WhiteBloodCells":
-                    zone.ActiveDefenseCount += 1;
-                    GD.Print($"[PLAYER] WBC deployed to {targetZone} (+1 defense) | EP: {CurrentState.PlayerEp}");
-                    break;
-
-                case "Antibodies":
-                    zone.ActiveDefenseCount += 2;
-                    GD.Print($"[PLAYER] Antibodies deployed to {targetZone} (+2 defense) | EP: {CurrentState.PlayerEp}");
-                    break;
-
-                case "Inflammation":
-                    zone.ActiveDefenseCount += 3;
-                    CurrentState.SeverityIndex += 1; // slight host HP damage per proposal
-                    GD.Print($"[PLAYER] Inflammation on {targetZone} (+3 defense, +1% severity) | EP: {CurrentState.PlayerEp}");
-                    break;
-
-                case "FeverResponse":
-                    // Global virus slowdown: raise ALL zones' effective defense by 1 for 2 rounds
-                    // We model this by raising defense on all infected zones
-                    foreach (var z in CurrentState.OrganGraph.Zones.Values.Where(z => z.IsInfected))
-                        z.ActiveDefenseCount += 1;
-                    GD.Print($"[PLAYER] Fever Response — all infected zones +1 defense | EP: {CurrentState.PlayerEp}");
-                    break;
-
-                case "MemoryCells":
-                    // Doubles the defense increment for a previously seen mutation
-                    zone.ActiveDefenseCount += 2;
-                    GD.Print($"[PLAYER] Memory Cells on {targetZone} (+2 defense vs known mutation) | EP: {CurrentState.PlayerEp}");
-                    break;
-
-                case "CytokineBurst":
-                    // Massive damage to all infected zones, but +10% severity
-                    foreach (var z in CurrentState.OrganGraph.Zones.Values.Where(z => z.IsInfected))
-                        z.ActiveDefenseCount += 5;
-                    CurrentState.SeverityIndex += 10;
-                    CurrentState.InfectionRate = Math.Max(0, CurrentState.InfectionRate - 2);
-                    GD.Print($"[PLAYER] CYTOKINE BURST — all infected zones +5 defense, -2 infection, +10% severity | EP: {CurrentState.PlayerEp}");
-                    break;
-            }
-        }
+        PlayerActionResolver.Apply(CurrentState, actionName, targetZone);
     }
 
     // =========================================================================

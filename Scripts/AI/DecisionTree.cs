@@ -37,7 +37,7 @@ namespace CatchMeIfYouCan.Scripts.AI
                 : null;
 
             // Traverse the decision tree
-            string chosenMutation = Traverse(dominantDefense, state, settings.Difficulty);
+            string chosenMutation = Traverse(dominantDefense, state, state.Difficulty);
 
             if (chosenMutation == null)
             {
@@ -189,7 +189,12 @@ namespace CatchMeIfYouCan.Scripts.AI
             //  tracked in RoundManager.ResolveRound() in Commit 5)
         }
 
-
+        /// <summary>
+        /// Called by RoundManager.ResolveRound() to apply the +3% severity
+        /// penalty for each mutation that went uncontested this round.
+        /// A mutation is "uncontested" if the player did not deploy the
+        /// defense that directly counters it.
+        /// </summary>
         public int CalculateUncontestedSeverity(GameState state)
         {
             int penalty = 0;
