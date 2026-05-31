@@ -7,7 +7,10 @@ namespace CatchMeIfYouCan.Scripts.AI
 {
     public class VirusAI
     {
-        // The main entry point for Phase 5
+        // ===================================================================
+        // PHASE 5 — BFS Virus Spread
+        // ===================================================================
+
         public void ExecuteSpreadVirus(GameState state)
         {
             OrganGraph graph = state.OrganGraph;
@@ -78,6 +81,7 @@ namespace CatchMeIfYouCan.Scripts.AI
         // ===================================================================
         // PHASE 4 — Minimax: Pick the best initial spread target
         // ===================================================================
+
         public string CalculateBestMove(GameState state, int depth)
         {
             float bestScore = float.MinValue;

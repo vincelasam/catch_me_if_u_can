@@ -66,7 +66,11 @@ namespace CatchMeIfYouCan.Scripts.AI
             }
         };
 
-
+        /// <summary>
+        /// Evaluates all player defenses and writes weighted scores to
+        /// state.LastUsedDefenses. Also returns the name of the dominant
+        /// defense type (highest score) for logging.
+        /// </summary>
         public string EvaluateAndScore(GameState state)
         {
             var scores = new Dictionary<string, float>();
